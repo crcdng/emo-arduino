@@ -1,1 +1,1 @@
-WiP Show September - emotion logger 
+WiP Show September - bot control 
