@@ -16,52 +16,64 @@
 // top open    bottom closed     output is connected to source via one-way valve but exhausting through bottom valve
 // top open    bottom open       output is sourced by both high-flow top valve and low-flow bottom valve  
 
+#define SPIKY  0b01000
+#define PADS1  0b0001
+#define PADS2  0b0010
+#define PADS3  0b0100
+#define PADS4  0b1000
+#define PADSALL (PADS1|PADS2|PADS3|PADS4)
+
+// open the main valve (no non-return)
+#define MAIN(x) ((x)<<8)
+// open both valves
+#define BOTH(x) ((x)|MAIN(x))
 
 struct step { uint16_t bitmask; int interval; };
 struct step seq1[] = { 
-  {0b01011100000000, 10000},
-  {0b00000000000000, 12000},
+  {MAIN(PADSALL), 10000},
+  {0, 12000},
   {ENDSEQ,0} };
 struct step seq2[] = { 
-  {0b01011100010111, 7000},
-  {0b00000000000000, 1000},
-  {0b01011100010111, 1000},
-  {0b00000000000000, 1000},
-  {0b01011100010111, 1000},
-  {0b00000000000000, 1000},
-  {0b01011100010111, 1000},
-  {0b00000000000000, 1000},
-  {0b01011100010111, 1000},
-  {0b00000000000000, 8000},
+  {BOTH(PADSALL), 7000},
+  {0, 1000},
+  {BOTH(PADSALL), 1000},
+  {0, 1000},
+  {BOTH(PADSALL), 1000},
+  {0, 1000},
+  {BOTH(PADSALL), 1000},
+  {0, 1000},
+  {BOTH(PADSALL), 1000},
+  {0, 8000},
   {ENDSEQ,0} };
 struct step seq3[] = { 
-  {0b00000100000001,  3000},
-  {0b00001100000011,  2000},
-  {0b00011000000110,  4000},
-  {0b01001000010100,  1500},
-  {0b01010000010100,  1500},
-  {0b01000000010000,  5000},
-  {0b01000100010001,  3000},
+  {BOTH(PADS1),  3000},
+  {BOTH(PADS1|PADS2),  2000},
+  {BOTH(PADS2|PADS3),  4000},
+  {BOTH(PADS2|PADS3|PADS4),  1500},
+  {BOTH(PADS3|PADS4),  1500},
+  {BOTH(PADS4),        5000},
+  {BOTH(PADS1|PADS4),  3000},
   {ENDSEQ,0} };
 struct step seq4[] = { 
-  {0b00100000001000, 10000},
-  {0b00000000000000, 12000},
+  {BOTH(SPIKY), 10000},
+  {0, 12000},
   {ENDSEQ,0} };
 struct step seq5[] = { 
-  {0b00100100001001,  3000},
-  {0b00001100001011,  2000},
-  {0b00111000001110,  4000},
-  {0b01101000011100,  1500},
-  {0b01110000011100,  1500},
-  {0b01000000011000,  5000},
-  {0b01000100011001,  3000},
-  {0b00000100000001,  3000},
-  {0b00001100000011,  2000},
-  {0b00011000000110,  4000},
-  {0b01001000010100,  1500},
-  {0b01010000010100,  1500},
-  {0b01000000010000,  5000},
-  {0b01000100010001,  3000},
+  {BOTH(PADS1|SPIKY),  3000},
+  {BOTH(PADS1|PADS2|SPIKY),  2000},
+  {BOTH(PADS2|PADS3|SPIKY),  4000},
+  {BOTH(PADS3|PADS4|SPIKY),  1500},
+  {BOTH(PADS3|PADS4|SPIKY),  1500},
+  {BOTH(PADS4|SPIKY),  5000},
+  {BOTH(PADS1|PADS4|SPIKY),  3000},
+  {BOTH(PADS1|SPIKY),  3000},
+  {BOTH(PADS1|SPIKY),  3000},
+  {BOTH(PADS1|PADS2|SPIKY),  2000},
+  {BOTH(PADS2|PADS3|SPIKY),  4000},
+  {BOTH(PADS3|PADS4|SPIKY),  1500},
+  {BOTH(PADS3|PADS4|SPIKY),  1500},
+  {BOTH(PADS4|SPIKY),  5000},
+  {BOTH(PADS1|PADS4|SPIKY),  3000},
   {ENDSEQ,0} };
 
 // the button steps through the choice of sequences in this list
