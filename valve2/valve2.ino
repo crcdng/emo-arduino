@@ -16,7 +16,7 @@
 // top open    bottom closed     output is connected to source via one-way valve but exhausting through bottom valve
 // top open    bottom open       output is sourced by both high-flow top valve and low-flow bottom valve  
 
-#define SPIKY  0b01000
+#define SPIKY  0b10000
 #define PADS1  0b0001
 #define PADS2  0b0010
 #define PADS3  0b0100
