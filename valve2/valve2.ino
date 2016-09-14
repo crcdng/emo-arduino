@@ -32,9 +32,19 @@ struct step { uint16_t bitmask; int interval; };
 struct step seq1[] = { 
   {MAIN(PADSALL), 10000},
   {0, 12000},
+  {MAIN(PADSALL), 10000},
+  {0, 12000},
   {ENDSEQ,0} };
 struct step seq2[] = { 
   {BOTH(PADSALL), 7000},
+  {0, 1000},
+  {BOTH(PADSALL), 1000},
+  {0, 1000},
+  {BOTH(PADSALL), 1000},
+  {0, 1000},
+  {BOTH(PADSALL), 1000},
+  {0, 1000},
+  {BOTH(PADSALL), 4000},
   {0, 1000},
   {BOTH(PADSALL), 1000},
   {0, 1000},
@@ -48,37 +58,44 @@ struct step seq2[] = {
 struct step seq3[] = { 
   {BOTH(PADS1),  3000},
   {BOTH(PADS1|PADS2),  2000},
-  {BOTH(PADS2|PADS3),  4000},
+  {BOTH(PADS2|PADS4),  4000},
   {BOTH(PADS2|PADS3|PADS4),  1500},
   {BOTH(PADS3|PADS4),  1500},
-  {BOTH(PADS4),        5000},
-  {BOTH(PADS1|PADS4),  3000},
+  {BOTH(PADS3),        1000},
+  {BOTH(PADS1|PADS3),  3000},
+  {0,  5000},
   {ENDSEQ,0} };
 struct step seq4[] = { 
   {BOTH(SPIKY), 10000},
-  {0, 12000},
+  {MAIN(SPIKY), 12000},
+  {BOTH(SPIKY), 10000},
+  {MAIN(SPIKY), 12000},
+  {0, 3000},
   {ENDSEQ,0} };
 struct step seq5[] = { 
-  {BOTH(PADS1|SPIKY),  3000},
-  {BOTH(PADS1|PADS2|SPIKY),  2000},
-  {BOTH(PADS2|PADS3|SPIKY),  4000},
-  {BOTH(PADS3|PADS4|SPIKY),  1500},
-  {BOTH(PADS3|PADS4|SPIKY),  1500},
-  {BOTH(PADS4|SPIKY),  5000},
-  {BOTH(PADS1|PADS4|SPIKY),  3000},
-  {BOTH(PADS1|SPIKY),  3000},
-  {BOTH(PADS1|SPIKY),  3000},
-  {BOTH(PADS1|PADS2|SPIKY),  2000},
-  {BOTH(PADS2|PADS3|SPIKY),  4000},
-  {BOTH(PADS3|PADS4|SPIKY),  1500},
-  {BOTH(PADS3|PADS4|SPIKY),  1500},
-  {BOTH(PADS4|SPIKY),  5000},
-  {BOTH(PADS1|PADS4|SPIKY),  3000},
+  {BOTH(SPIKY), 7000},
+  {0, 1000},
+  {BOTH(SPIKY), 1000},
+  {0, 1000},
+  {BOTH(SPIKY), 1000},
+  {0, 1000},
+  {BOTH(SPIKY), 1000},
+  {0, 1000},
+  {BOTH(SPIKY), 4000},
+  {0, 1000},
+  {BOTH(SPIKY), 1000},
+  {0, 1000},
+  {BOTH(SPIKY), 1000},
+  {0, 1000},
+  {BOTH(SPIKY), 1000},
+  {0, 1000},
+  {BOTH(SPIKY), 1000},
+  {0, 8000},
   {ENDSEQ,0} };
 
 // the button steps through the choice of sequences in this list
 
-struct step *sequences[] = { seq4,      seq1, seq2, seq3, seq4, seq5 };
+struct step *sequences[] = { seq1, seq2, seq3, seq4, seq5 };
 
 
 void setup() {
@@ -119,6 +136,7 @@ void loop() {
     timer = sequences[seq][index].interval;
 
      
+#if 0
   // show switch status with led
   digitalWrite(13, !digitalRead(10));
 
@@ -141,6 +159,7 @@ void loop() {
     index = 0;
     Serial.print("bump seq to ");Serial.println(seq+1);
   }
+#endif
 
   // output current state. This is locked around ports 2-8 .. should have a map for those really.
   int port, mask;
@@ -152,6 +171,14 @@ void loop() {
   }
 
   if ((timer-=LOOPTIME) <= 0) {
+
+    if (sequences[seq][++index].bitmask == ENDSEQ) {
+      if (++seq >= MAXSEQ)
+        seq = 0;
+      index = 0;
+
+    }
+    timer = sequences[seq][index].interval;
 
     if (1)
     {   
@@ -175,10 +202,7 @@ void loop() {
       Serial.println();
     }  
 
-    if (sequences[seq][++index].bitmask == ENDSEQ)
-      index = 0;
-    timer = sequences[seq][index].interval;
-}
+  }
 
   // establish loop time to control debounce and sequence timing
   delay(LOOPTIME);
