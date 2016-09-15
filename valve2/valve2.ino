@@ -16,57 +16,187 @@
 // top open    bottom closed     output is connected to source via one-way valve but exhausting through bottom valve
 // top open    bottom open       output is sourced by both high-flow top valve and low-flow bottom valve  
 
+#define SPIKY  0b10000
+#define PADS1  0b0001
+#define PADS2  0b0010
+#define PADS3  0b0100
+#define PADS4  0b1000
+#define PADSALL  (PADS1|PADS2|PADS3|PADS4)
+#define PADSH1   (PADS2|PADS4)
+#define PADSH2   (PADS1|PADS3)
+
+// open the main valve (no non-return)
+#define MAIN(x) ((x)<<8)
+// open both valves
+#define BOTH(x) ((x)|MAIN(x))
 
 struct step { uint16_t bitmask; int interval; };
 struct step seq1[] = { 
-  {0b01011100000000, 10000},
-  {0b00000000000000, 12000},
+  {MAIN(PADSALL), 12000},
+  {0, 15000},
+  {MAIN(PADSALL), 12000},
+  {0, 15000},
+  {MAIN(PADSALL), 12000},
+  {0, 20000},
   {ENDSEQ,0} };
 struct step seq2[] = { 
-  {0b01011100010111, 7000},
-  {0b00000000000000, 1000},
-  {0b01011100010111, 1000},
-  {0b00000000000000, 1000},
-  {0b01011100010111, 1000},
-  {0b00000000000000, 1000},
-  {0b01011100010111, 1000},
-  {0b00000000000000, 1000},
-  {0b01011100010111, 1000},
-  {0b00000000000000, 8000},
+  {BOTH(PADSALL), 9000},
+  {0, 1000},
+  {BOTH(PADSH1), 1000},
+  {0, 1000},
+  {BOTH(PADSH2), 1000},
+  {0, 1000},
+  {BOTH(PADSH1), 1000},
+  {0, 1000},
+  {BOTH(PADSH2), 1000},
+  {0, 1000},
+  {BOTH(PADSH1), 1000},
+  {0, 1000},
+  {BOTH(PADSH2), 1000},
+  {0, 1000},
+  {BOTH(PADSH1), 1000},
+  {0, 1000},
+  {BOTH(PADSH2), 1000},
+  {0, 12000},
   {ENDSEQ,0} };
 struct step seq3[] = { 
-  {0b00000100000001,  3000},
-  {0b00001100000011,  2000},
-  {0b00011000000110,  4000},
-  {0b01001000010100,  1500},
-  {0b01010000010100,  1500},
-  {0b01000000010000,  5000},
-  {0b01000100010001,  3000},
+/*
+  {BOTH(PADS1),  3000},
+  {BOTH(PADS1|PADS2),  2000},
+  {BOTH(PADS2|PADS4),  4000},
+  {BOTH(PADS2|PADS3|PADS4),  1500},
+  {BOTH(PADS3|PADS4),  1500},
+  {BOTH(PADS3),        1000},
+  {BOTH(PADS1|PADS3),  3000},
+  {BOTH(PADS1),  3000},
+*/
+
+  {BOTH(PADS1),  4000},
+  {BOTH(PADS1|PADS2), 2000},
+  {BOTH(PADS2), 2000},
+  {BOTH(PADS2|PADS4), 2000},
+  {BOTH(PADS4), 2000},
+  {BOTH(PADS3|PADS4), 2000},
+  {BOTH(PADS3), 2000},
+  {BOTH(PADS1),  4000},
+  {BOTH(PADS1|PADS2), 2000},
+  {BOTH(PADS2), 2000},
+  {BOTH(PADS2|PADS4), 2000},
+  {BOTH(PADS4), 2000},
+  {BOTH(PADS3|PADS4), 2000},
+  {BOTH(PADS3), 2000},
+  {BOTH(PADS1),  4000},
+  {BOTH(PADS1|PADS2), 2000},
+  {BOTH(PADS2), 2000},
+  {BOTH(PADS2|PADS4), 2000},
+  {BOTH(PADS4), 2000},
+  {BOTH(PADS3|PADS4), 2000},
+  {BOTH(PADS3), 2000},
+  
+  {0,  20000},
   {ENDSEQ,0} };
 struct step seq4[] = { 
-  {0b00100000001000, 10000},
-  {0b00000000000000, 12000},
+  {BOTH(SPIKY), 10000},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {0,50},
+  {MAIN(SPIKY), 200},
+  {BOTH(SPIKY), 10000},
+  {MAIN(SPIKY), 2000},
+  {0, 12000},
   {ENDSEQ,0} };
 struct step seq5[] = { 
-  {0b00100100001001,  3000},
-  {0b00001100001011,  2000},
-  {0b00111000001110,  4000},
-  {0b01101000011100,  1500},
-  {0b01110000011100,  1500},
-  {0b01000000011000,  5000},
-  {0b01000100011001,  3000},
-  {0b00000100000001,  3000},
-  {0b00001100000011,  2000},
-  {0b00011000000110,  4000},
-  {0b01001000010100,  1500},
-  {0b01010000010100,  1500},
-  {0b01000000010000,  5000},
-  {0b01000100010001,  3000},
+  {BOTH(SPIKY), 3000},
+  {0, 1000},
+  {BOTH(SPIKY), 1000},
+  {0, 1000},
+  {BOTH(SPIKY), 1000},
+  {0, 1000},
+  {BOTH(SPIKY), 1000},
+  {0, 1000},
+  {BOTH(SPIKY), 1000},
+  {0, 1000},
+  {BOTH(SPIKY), 1000},
+  {0, 1000},
+  {BOTH(SPIKY), 1000},
+  {0, 1000},
+  {BOTH(SPIKY), 1000},
+  {0, 1000},
+  {BOTH(SPIKY), 1000},
+  {0, 20000},
   {ENDSEQ,0} };
 
 // the button steps through the choice of sequences in this list
 
-struct step *sequences[] = { seq4,      seq1, seq2, seq3, seq4, seq5 };
+struct step *sequences[] = { seq1, seq2, seq3, seq4, seq5 };
 
 
 void setup() {
@@ -107,28 +237,6 @@ void loop() {
     timer = sequences[seq][index].interval;
 
      
-  // show switch status with led
-  digitalWrite(13, !digitalRead(10));
-
-  // flip between sequences when the button / reed switch is operated
-
-  static int debounce = 0;
-  debounce += digitalRead(10) ? -1 : 1;
-  if (debounce > 10) debounce = 10;
-  if (debounce < -10) debounce = -10;
-
-  // arm sequence increment when debounce is leading edge
-  if (debounce > 5) {
-    lastseq = seq;
-  }
-
-  if ((debounce == -10) && (seq == lastseq)) {
-    seq = lastseq + 1;
-    if (seq >= MAXSEQ)
-      seq = MINSEQ;
-    index = 0;
-    Serial.print("bump seq to ");Serial.println(seq+1);
-  }
 
   // output current state. This is locked around ports 2-8 .. should have a map for those really.
   int port, mask;
@@ -140,6 +248,18 @@ void loop() {
   }
 
   if ((timer-=LOOPTIME) <= 0) {
+
+    if (sequences[seq][++index].bitmask == ENDSEQ) {
+      lastseq = seq;
+      //do {
+      // seq = random(MINSEQ, MAXSEQ);
+      // } while (seq == lastseq);
+      if (++seq >= MAXSEQ)
+        seq = 0;
+      index = 0;
+
+    }
+    timer = sequences[seq][index].interval;
 
     if (1)
     {   
@@ -163,10 +283,7 @@ void loop() {
       Serial.println();
     }  
 
-    if (sequences[seq][++index].bitmask == ENDSEQ)
-      index = 0;
-    timer = sequences[seq][index].interval;
-}
+  }
 
   // establish loop time to control debounce and sequence timing
   delay(LOOPTIME);
